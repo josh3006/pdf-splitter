@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  pdf-splitter:
+    build: .
+    container_name: pdfsplitter_app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"  # Only expose to localhost (Nginx will proxy)
+    environment:
+      - APP_USERNAME=${APP_USERNAME:-admin}
+      - APP_PASSWORD=${APP_PASSWORD:-password123}
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-dev-secret-key-change-me}
+      - PORT=8080
+    volumes:
+      # Optional: for development - uncomment to mount code for live changes
+      # - .:/app
+      # Persistent storage for uploads (optional)
+      - ./uploads:/app/uploads
+    networks:
+      - web_network
+
+networks:
+  web_network:
+    driver: bridge

@@ -110,6 +110,22 @@ Setup and run:
 
 Then open http://localhost:8080
 
+## Production release
+Rebuild and start the container
+
+Rebuild with new .env
+```
+docker compose build --no-cache
+```
+Start the container
+```
+docker compose up -d
+```
+Verify it's running
+```
+docker compose ps
+docker compose logs
+```
 ## Notes
 
 - This app is intentionally simple and uses hard-coded naming per requirement. If you prefer using the input file name as a prefix, you can adjust `output_pattern` in `app.py`.
