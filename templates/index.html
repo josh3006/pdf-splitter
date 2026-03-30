@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF Splitter</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --danger: #dc2626;
+      --shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0;
+      color: var(--text);
+      background: linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+
+    .header {
+      display:flex; justify-content: space-between; align-items:center;
+      padding: 1.25rem 0 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border);
+    }
+    .header h2 { margin: 0; font-size: 1.5rem; letter-spacing: .2px; }
+    .header a { text-decoration: none; color: var(--accent); font-weight: 600; border: 1px solid var(--accent); padding: .5rem .9rem; border-radius: 8px; transition: all .18s ease; }
+    .header a:hover { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25); }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1.5rem 1.5rem 1.25rem; border: 1px solid var(--border); border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    p { color: var(--muted); line-height: 1.6; }
+
+    .field { margin: 1rem 0 1.25rem; }
+    label { display:block; font-weight: 600; margin-bottom: .35rem; }
+
+    input[type="file"] {
+      display:block; width: 100%; padding: .7rem; background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input[type="file"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+
+    .btn {
+      display:inline-block; padding: 0.65rem 1.1rem; border-radius: 10px; border: 1px solid transparent; cursor:pointer;
+      background: var(--accent); color: #fff; font-weight: 600; letter-spacing: .2px; transition: transform .08s ease, background .15s ease, box-shadow .15s ease;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.22);
+    }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
+
+    .alert {
+      margin: 0 0 1rem; padding: .75rem .9rem; border-radius: 10px; font-weight: 600;
+      color: #991b1b; background: #fee2e2; border: 1px solid #fecaca;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.06);
+    }
+
+    code { background: #f1f5f9; padding: .15rem .35rem; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>PDF Splitter</h2>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card">
+      <p>Upload a PDF to split into single pages using <code>pdfseparate</code>. The output files are named like <code>file-xxxxxxx-1.pdf</code>, <code>file-xxxxxxx-2.pdf</code>, and are returned together as <strong>output.zip</strong>.</p>
+
+      <form action="{{ url_for('split_pdf') }}" method="post" enctype="multipart/form-data">
+        <div class="field">
+          <label for="pdf">Choose PDF file</label>
+          <input id="pdf" name="pdf" type="file" accept="application/pdf,.pdf" required>
+        </div>
+        <button class="btn" type="submit">Split and Download ZIP</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
