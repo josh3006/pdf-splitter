@@ -134,6 +134,7 @@ jobs:
           WEB_CONCURRENCY: ${{ vars.WEB_CONCURRENCY || '2' }}
           GUNICORN_TIMEOUT: ${{ vars.GUNICORN_TIMEOUT || '120' }}
           PROXY_NETWORK: ${{ vars.PROXY_NETWORK || 'proxy' }}
+          COMPOSE_PROJECT_NAME: ${{ vars.COMPOSE_PROJECT_NAME || 'pdfsplitter' }}
         run: |
           set -euo pipefail
           {
@@ -145,6 +146,7 @@ jobs:
             printf 'WEB_CONCURRENCY=%s\n' "$WEB_CONCURRENCY"
             printf 'GUNICORN_TIMEOUT=%s\n' "$GUNICORN_TIMEOUT"
             printf 'PROXY_NETWORK=%s\n' "$PROXY_NETWORK"
+            printf 'COMPOSE_PROJECT_NAME=%s\n' "$COMPOSE_PROJECT_NAME"
           } > deploy.env
 
       - name: Copy production env file
@@ -166,12 +168,14 @@ jobs:
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME || github.actor }}
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
           PROXY_NETWORK: ${{ vars.PROXY_NETWORK || 'proxy' }}
+          COMPOSE_PROJECT_NAME: ${{ vars.COMPOSE_PROJECT_NAME || 'pdfsplitter' }}
         run: |
           set -euo pipefail
           ssh "$PROD_SSH_USER@$PROD_SSH_HOST" "
             set -euo pipefail
             cd '$PROD_DEPLOY_PATH'
             docker network inspect '$PROXY_NETWORK' >/dev/null 2>&1 || docker network create '$PROXY_NETWORK'
+            docker rm -f deploy-pdfsplitter-1 >/dev/null 2>&1 || true
             echo '$GHCR_TOKEN' | docker login ghcr.io -u '$GHCR_USERNAME' --password-stdin
             for attempt in 1 2 3; do
               if docker compose pull; then
@@ -182,7 +186,7 @@ jobs:
               fi
               sleep \$((attempt * 20))
             done
-            docker compose up -d
+            COMPOSE_PROJECT_NAME='$COMPOSE_PROJECT_NAME' docker compose up -d
             docker image prune -f
-            docker compose ps
+            COMPOSE_PROJECT_NAME='$COMPOSE_PROJECT_NAME' docker compose ps
           "

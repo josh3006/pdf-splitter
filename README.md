@@ -148,6 +148,7 @@ Optional GitHub repository variables:
 APP_USERNAME=admin
 APP_PORT=8081
 PROXY_NETWORK=proxy
+COMPOSE_PROJECT_NAME=pdfsplitter
 NGINX_DEPLOY_PATH=/opt/eqlsquare/payslip/nginx
 WEB_CONCURRENCY=2
 GUNICORN_TIMEOUT=120
