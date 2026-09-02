@@ -1,0 +1,31 @@
+services:
+  pdfsplitter:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    environment:
+      APP_USERNAME: ${APP_USERNAME:-admin}
+      APP_PASSWORD: ${APP_PASSWORD}
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY}
+      PORT: 8080
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+      GUNICORN_TIMEOUT: ${GUNICORN_TIMEOUT:-120}
+    volumes:
+      - uploads:/app/uploads
+    networks:
+      proxy:
+        aliases:
+          - pdfsplitter-app
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=5).read()\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  uploads:
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-proxy}

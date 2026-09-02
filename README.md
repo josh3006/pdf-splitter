@@ -126,6 +126,55 @@ Verify it's running
 docker compose ps
 docker compose logs
 ```
+
+## GitHub Actions deployment
+
+The repository includes `.github/workflows/deploy.yml` for RackNerd Docker deployment.
+
+Required GitHub repository secrets:
+
+```text
+PROD_SSH_HOST=155.94.157.140
+PROD_SSH_USER=root
+PROD_SSH_PRIVATE_KEY=private SSH key with server access
+PROD_DEPLOY_PATH=/opt/eqlsquare/pdf-splitter
+APP_PASSWORD=strong login password
+FLASK_SECRET_KEY=long random Flask session secret
+```
+
+Optional GitHub repository variables:
+
+```text
+APP_USERNAME=admin
+PROXY_NETWORK=proxy
+NGINX_DEPLOY_PATH=/opt/eqlsquare/payslip/nginx
+WEB_CONCURRENCY=2
+GUNICORN_TIMEOUT=120
+```
+
+The app deploys to the shared Docker network as `pdfsplitter-app`. The existing shared Nginx reverse proxy should forward `pdfsplitter.eqlsquare.com` to:
+
+```text
+http://pdfsplitter-app:8080
+```
+
+To activate the Nginx config on the server:
+
+```bash
+cd /opt/eqlsquare/payslip/nginx
+cp templates/pdfsplitter.http.conf conf.d/pdfsplitter.conf
+docker compose exec nginx nginx -t
+docker compose exec nginx nginx -s reload
+```
+
+After DNS points `pdfsplitter.eqlsquare.com` to the server, issue the certificate:
+
+```bash
+docker compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot -d pdfsplitter.eqlsquare.com --email YOUR_EMAIL --agree-tos --no-eff-email
+cp templates/pdfsplitter.https.conf conf.d/pdfsplitter.conf
+docker compose exec nginx nginx -t
+docker compose exec nginx nginx -s reload
+```
 ## Notes
 
 - This app is intentionally simple and uses hard-coded naming per requirement. If you prefer using the input file name as a prefix, you can adjust `output_pattern` in `app.py`.

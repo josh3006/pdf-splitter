@@ -15,6 +15,11 @@ USERNAME = os.environ.get("APP_USERNAME", "admin")
 PASSWORD = os.environ.get("APP_PASSWORD", "password123")
 
 
+@app.route("/healthz", methods=["GET"])
+def healthz():
+    return {"status": "UP"}
+
+
 def login_required(view_func):
     from functools import wraps
 

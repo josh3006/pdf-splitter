@@ -1,13 +1,10 @@
 # Use slim Python with Debian to have apt for installing poppler-utils
 FROM python:3.11-slim
 
-# Ensure stdout/stderr are unbuffered
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     FLASK_RUN_HOST=0.0.0.0 \
-    PORT=8080 \
-    APP_USERNAME=admin \
-    APP_PASSWORD=password123
+    PORT=8080
 
 # Install poppler-utils for pdfseparate
 RUN apt-get update \
@@ -23,4 +20,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["python", "app.py"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8080} --workers ${WEB_CONCURRENCY:-2} --timeout ${GUNICORN_TIMEOUT:-120} app:app"]
