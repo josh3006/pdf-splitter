@@ -146,6 +146,7 @@ Optional GitHub repository variables:
 
 ```text
 APP_USERNAME=admin
+APP_PORT=8081
 PROXY_NETWORK=proxy
 NGINX_DEPLOY_PATH=/opt/eqlsquare/payslip/nginx
 WEB_CONCURRENCY=2

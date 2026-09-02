@@ -11,6 +11,8 @@ services:
       GUNICORN_TIMEOUT: ${GUNICORN_TIMEOUT:-120}
     volumes:
       - uploads:/app/uploads
+    ports:
+      - "127.0.0.1:${APP_PORT:-8081}:8080"
     networks:
       proxy:
         aliases:

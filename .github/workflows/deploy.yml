@@ -130,6 +130,7 @@ jobs:
           APP_USERNAME: ${{ vars.APP_USERNAME || 'admin' }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
           FLASK_SECRET_KEY: ${{ secrets.FLASK_SECRET_KEY }}
+          APP_PORT: ${{ vars.APP_PORT || '8081' }}
           WEB_CONCURRENCY: ${{ vars.WEB_CONCURRENCY || '2' }}
           GUNICORN_TIMEOUT: ${{ vars.GUNICORN_TIMEOUT || '120' }}
           PROXY_NETWORK: ${{ vars.PROXY_NETWORK || 'proxy' }}
@@ -140,6 +141,7 @@ jobs:
             printf 'APP_USERNAME=%s\n' "$APP_USERNAME"
             printf 'APP_PASSWORD=%s\n' "$APP_PASSWORD"
             printf 'FLASK_SECRET_KEY=%s\n' "$FLASK_SECRET_KEY"
+            printf 'APP_PORT=%s\n' "$APP_PORT"
             printf 'WEB_CONCURRENCY=%s\n' "$WEB_CONCURRENCY"
             printf 'GUNICORN_TIMEOUT=%s\n' "$GUNICORN_TIMEOUT"
             printf 'PROXY_NETWORK=%s\n' "$PROXY_NETWORK"
